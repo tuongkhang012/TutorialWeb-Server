@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import School from '../models/school.js';
 //500 is error
 //200 is success

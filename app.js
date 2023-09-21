@@ -8,6 +8,7 @@ import 'dotenv/config'
 import schoolRouter from "./routes/schoolRoute.js";
 import studentRouter from "./routes/studentRoute.js";
 import equipmentRouter from "./routes/equipmentRoute.js";
+import userRouter from "./routes/userRoute.js";
 
 const app = express();
 const PORT = process.env.PORT || 8081
@@ -22,6 +23,7 @@ app.use(express.static('public'));
 app.use('/api', schoolRouter)
 app.use('/api', studentRouter)
 app.use('/api', equipmentRouter)
+app.use('/api', userRouter)
 
 //connect to database
 mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
