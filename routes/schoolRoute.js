@@ -1,5 +1,5 @@
-import express from 'express';
-import * as schoolCtl from '../controllers/schoolController.js';
+const express = require('express');
+const schoolCtl = require('../controllers/schoolController.js');
 
 const router = express.Router();
 router.get('/schools', schoolCtl.getAllSchool)
@@ -8,4 +8,4 @@ router.post('/school', schoolCtl.createSchool)
 router.put('/school/:id', schoolCtl.updateSchool)
 router.delete('/school/:id', schoolCtl.deleteSchool)
 
-export default router;
+module.exports = router;

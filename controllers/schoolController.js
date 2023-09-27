@@ -1,4 +1,4 @@
-import School from '../models/school.js';
+const School = require('../models/school.js');
 //500 is error
 //200 is success
 //201 is creation of object success
@@ -6,54 +6,37 @@ import School from '../models/school.js';
 //204 is delete success
 
 //Create new school
-export function createSchool (req, res) {
-    const newSchool = new School({
-      name: req.body.name,
-      noStudents: req.body.noStudents,
-      sort: req.body.sort
-    }); // create new School object
-    
-    newSchool // save it then return the return a message for the user
-      .save()
-      .then((saved_school) => {
-        res.status(201).json({
-          success: true,
-          message: 'New school created successfully',
-          School: saved_school,
-        });
-      })
-      .catch((err) => {
-        res.status(500).json({
-          success: false,
-          message: 'Server error. Please try again.',
-          err: err.message
-        });
-      });
-}
+class SchoolCtl{
+  async createSchool (req, res) {
+      const newSchool = new School(req.body); // create new School object
+      
+      await newSchool.save()
+      res.status(201).json(newSchool)
+  }
 
-//Get all school
-export function getAllSchool(req, res){
-    School.find() //find all School object
-    .then((all_school) => {
-        return res.status(200).json({
-            success: true,
-            message: 'A list of all schools',
-            School: all_school,
-        });
-    })
-    .catch((err) => {
-        res.status(500).json({
-            success: false,
-            message: 'Server error. Please try again',
-            error: err.message,
-        });
-    });
-}
+  //Get all school
+  async getAllSchool(req, res){
+      const all_school = await School.aggregate([
+        {
+          $lookup:{
+            from: 'students',
+            localField: '_id',
+            foreignField: 'school',
+            as: 'students',
+          },
+        },
+        {
+          $addFields: {
+            noStudents: {$size: '$students'}
+          },
+        }
+      ])//find all School object
+      res.status(200).send(all_school)
+  }
 
-//Get school by id
-export function getSchoolByID(req, res){
-  School.findById(req.params.id) //find by id the school
-  .then((target_school) => {
+  //Get school by id
+  async getSchoolByID(req, res){
+    const target = await School.findById(req.params.id) //find by id the school
     if(!target_school){ //if it's not exist, throw error
       return res.status(404).json({
         success: false,
@@ -61,69 +44,37 @@ export function getSchoolByID(req, res){
       });
     }
 
-    res.status(200).json({ //if found, return the School object
-      success: true,
-      message: 'School founded',
-      School: target_school
-    });
-  })
-  .catch((err) =>{
-    return res.status(500).json({
-      success: false,
-      message: 'Server error. Please try again',
-      error: err.message
-    });
-  });
-}
-
-// Update existing school
-export function updateSchool(req, res){
-  const updatedData = {
-    ...req.body,
-    update_at: new Date(),
+    res.status(200).json(target)
   }
 
-  School.findByIdAndUpdate(req.params.id, updatedData, {new: true})
-  .then((updating_school) => {
-    if(!updating_school){
-      return res.status(404).json({
-        message: 'School not found'
-      });
+  // Update existing school
+  async updateSchool(req, res){
+    const updatedData = {
+      ...req.body,
+      update_at: new Date(),
     }
+    const _id = req.params.id;
+    const updated = await School.findByIdAndUpdate(_id, updatedData, {new: true})
+      if(!updated){
+        return res.status(404).json({
+          message: 'School not found'
+        });
+      }
 
-    return res.status(200).json({
-      success: true,
-      message: 'Updated school',
-      School: updating_school,
-    });
-  })
-  .catch((err) => {
-    res.status(500).json({
-      success: false,
-      message: 'Server error. Please try again',
-      error: err.message,
-    })
-  })
+    res.status(200).json(updated)
+  }
+
+  // Delete a room
+  async deleteSchool(req, res){
+    const _id = req.params.id
+    const deleted = await School.findByIdAndDelete(_id)
+      if(!deleted){
+        return res.status(404).json({
+          message: 'School not found'
+        });
+      }
+    res.status(204).json()
+  }
 }
 
-// Delete a room
-export function deleteSchool(req, res){
-  School.findByIdAndDelete(req.params.id)
-  .then((deleting_school) => {
-    if(!deleting_school){
-      return res.status(404).json({
-        message: 'School not found'
-      });
-    }
-    res.status(204).json({
-      success: true,
-    });
-  })
-  .catch((err) => {
-    res.status(500).json({
-      success: false,
-      message: 'Server error. Please try again',
-      error: err.message,
-    })
-  })
-}
+module.exports = new SchoolCtl;

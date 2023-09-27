@@ -1,12 +1,12 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const equipmentSchema = new mongoose.Schema({
-    name: String,
-    type: String,
-    tier: Number,
-    sort: Number,
+    name: { type:String },
+    type: { type:String },
+    tier: { type:Number },
+    sort: { type:Number },
     created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now}
 });
 
-export default mongoose.model('Equipment', equipmentSchema);
+module.exports = mongoose.model('Equipment', equipmentSchema);

@@ -1,14 +1,14 @@
 //import dependencies
-import express from 'express';
-import bodyParser from 'body-parser';
-import mongoose, { set } from 'mongoose';
-import logger from 'morgan';
-import cors from 'cors';
-import 'dotenv/config'
-import schoolRouter from "./routes/schoolRoute.js";
-import studentRouter from "./routes/studentRoute.js";
-import equipmentRouter from "./routes/equipmentRoute.js";
-import userRouter from "./routes/userRoute.js";
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const logger = require('morgan');
+const cors = require('cors');
+require('dotenv').config()
+const schoolRouter = require("./routes/schoolRoute.js");
+const studentRouter = require("./routes/studentRoute.js");
+const equipmentRouter = require("./routes/equipmentRoute.js");
+const userRouter = require("./routes/userRoute.js");
 
 const app = express();
 const PORT = process.env.PORT || 8081

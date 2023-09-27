@@ -1,11 +1,11 @@
-import mongoose from "mongoose"
+const mongoose = require("mongoose");
 
 const schoolSchema = new mongoose.Schema({
-    name: String,
-    noStudents: Number,
-    sort: Number,
+    name: { type:String },
+    noStudents: { type:Number },
+    sort: { type:Number },
     created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now}
 });
 
-export default mongoose.model('School', schoolSchema);
+module.exports = mongoose.model('School', schoolSchema);
