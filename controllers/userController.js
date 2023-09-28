@@ -4,7 +4,6 @@ class UserCtl {
     async registerNewUser (req, res){
         try {
             let isUser = await User.find({ email: req.body.email }); //find email
-            console.log(isUser);
             if (isUser.length >= 1) {
                 return res.status(409).json({
                   message: "Email already in use"
